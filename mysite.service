@@ -1,0 +1,13 @@
+[Unit]
+Description=Edward Clark Portfolio Site
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/Server-007/mysite
+ExecStart=/home/Server-007/mysite/server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

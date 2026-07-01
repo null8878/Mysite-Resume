@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Hosted Homelab — Case Study | Edward Clark</title>
+  <meta name="description" content="Full case study of Edward Clark's self-hosted homelab: bare-metal hypervisors, Docker, Tailscale VPN, Nginx reverse proxy, and 24/7 production infrastructure.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.edwardclark.shop/homelab.html">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #09090b;
+      color: #e4e4e7;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(9,9,11,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid #1f1f23;
+    }
+    nav .container {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      height: 64px;
+    }
+    nav .logo { font-weight: 700; font-size: 1.2rem; color: #fff; text-decoration: none; }
+    nav .logo span { color: #6366f1; }
+    nav a { color: #a1a1aa; text-decoration: none; font-size: 0.9rem; }
+    nav a:hover { color: #fff; }
+
+    .hero {
+      padding-top: 120px; padding-bottom: 60px;
+    }
+    .hero .breadcrumb {
+      font-size: 0.8rem; color: #71717a; margin-bottom: 20px;
+    }
+    .hero .breadcrumb a { color: #818cf8; text-decoration: none; }
+    .hero .breadcrumb a:hover { text-decoration: underline; }
+    .hero .tag {
+      display: inline-block; padding: 4px 14px; border-radius: 999px;
+      background: rgba(34,197,94,0.1); color: #4ade80;
+      font-size: 0.75rem; font-weight: 600; margin-bottom: 16px;
+      border: 1px solid rgba(34,197,94,0.2);
+    }
+    .hero h1 {
+      font-size: 2.5rem; font-weight: 800; line-height: 1.2;
+      letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+    .hero .meta {
+      color: #71717a; font-size: 0.9rem;
+      display: flex; gap: 20px; flex-wrap: wrap;
+    }
+
+    .content { padding-bottom: 80px; }
+
+    .content h2 {
+      font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px;
+      letter-spacing: -0.01em;
+    }
+    .content h3 {
+      font-size: 1.1rem; font-weight: 600; margin: 32px 0 12px;
+    }
+    .content p {
+      color: #a1a1aa; font-size: 0.95rem; margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .content p strong { color: #e4e4e7; }
+
+    .content ul, .content ol {
+      color: #a1a1aa; font-size: 0.95rem; margin: 0 0 16px 20px;
+      line-height: 1.7;
+    }
+    .content li { margin-bottom: 8px; }
+    .content li strong { color: #e4e4e7; }
+
+    .spec-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px; margin: 24px 0;
+    }
+    .spec-card {
+      background: #141416; border: 1px solid #1f1f23;
+      border-radius: 8px; padding: 20px;
+    }
+    .spec-card .label { font-size: 0.7rem; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; }
+    .spec-card .value { font-size: 1.1rem; font-weight: 600; margin-top: 4px; color: #818cf8; }
+
+    .arch-box {
+      background: #141416; border: 1px solid #1f1f23;
+      border-radius: 12px; padding: 28px; margin: 24px 0;
+    }
+    .arch-box .line { font-family: monospace; font-size: 0.85rem; color: #a1a1aa; line-height: 2; }
+    .arch-box .line .hl { color: #818cf8; }
+    .arch-box .line .gr { color: #4ade80; }
+
+    .lesson-box {
+      background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 12px; padding: 24px; margin: 24px 0;
+    }
+    .lesson-box h3 { color: #818cf8; margin-bottom: 8px; }
+    .lesson-box p { font-size: 0.9rem; }
+
+    .content .btn {
+      display: inline-block; padding: 10px 24px; border-radius: 8px;
+      font-weight: 600; font-size: 0.9rem; text-decoration: none;
+      transition: all 0.2s; margin-top: 8px;
+    }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-primary:hover { background: #4f46e5; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(99,102,241,0.3); }
+    .btn-outline { background: transparent; color: #e4e4e7; border: 1px solid #27272a; }
+    .btn-outline:hover { border-color: #6366f1; color: #fff; }
+
+    footer {
+      border-top: 1px solid #1f1f23; padding: 32px 0;
+      text-align: center; color: #71717a; font-size: 0.85rem;
+    }
+    footer a { color: #818cf8; text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .content h2 { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/" class="logo">Edward<span>Clark</span></a>
+      <a href="/">Back to Portfolio</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a> / Case Study</div>
+      <div class="tag">Ongoing &middot; Production</div>
+      <h1>Self-Hosted Homelab:<br>Production Infrastructure</h1>
+      <div class="meta">
+        <span>Role: Architect &amp; Operator</span>
+        <span>Stack: Docker, Nginx, Linux, Tailscale, Proxmox</span>
+        <span>Started: 2024</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container">
+
+      <h2>Overview</h2>
+      <p>
+        I designed and deployed a bare-metal homelab that runs production-grade services 24/7. 
+        This isn't a Raspberry Pi experiment &mdash; it's a multi-VM, multi-container infrastructure 
+        with secure remote access, automated monitoring, and real web-facing services behind an 
+        Nginx reverse proxy. Every component was chosen to mirror production environments I'd 
+        manage professionally.
+      </p>
+
+      <h2>Hardware</h2>
+      <div class="spec-grid">
+        <div class="spec-card">
+          <div class="label">Hypervisor</div>
+          <div class="value">Proxmox VE</div>
+        </div>
+        <div class="spec-card">
+          <div class="label">CPU</div>
+          <div class="value">8 Cores</div>
+        </div>
+        <div class="spec-card">
+          <div class="label">RAM</div>
+          <div class="value">32 GB DDR4</div>
+        </div>
+        <div class="spec-card">
+          <div class="label">Storage</div>
+          <div class="value">4 TB NAS</div>
+        </div>
+        <div class="spec-card">
+          <div class="label">OS</div>
+          <div class="value">Debian 12</div>
+        </div>
+        <div class="spec-card">
+          <div class="label">Network</div>
+          <div class="value">Tailscale Mesh</div>
+        </div>
+      </div>
+
+      <h2>Architecture</h2>
+      <p>
+        The lab runs on <strong>Proxmox VE</strong> as the Type-1 hypervisor, hosting multiple 
+        Linux VMs. Each VM has a dedicated role &mdash; no monolithic servers. This forces me 
+        to think in terms of service boundaries and network segmentation, the same way 
+        production environments are designed.
+      </p>
+
+      <div class="arch-box">
+        <div class="line"><span class="hl">Proxmox VE</span> (Bare-Metal Hypervisor)</div>
+        <div class="line">&nbsp;&#9492;&#9472; VM 01: <span class="gr">Docker Host</span> (Application Containers)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Nginx Reverse Proxy</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Web Apps (Portfolio, BrightLayer)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Home Assistant Container</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Plex Media Server</div>
+        <div class="line">&nbsp;&#9492;&#9472; VM 02: <span class="gr">NAS</span> (4 TB Storage)</div>
+        <div class="line">&nbsp;&#9492;&#9472; VM 03: <span class="gr">Monitoring</span> (Uptime, Logs)</div>
+        <div class="line">&nbsp;&#9492;&#9472; <span class="hl">Tailscale VPN</span> (Mesh Network)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Encrypted remote access from any device</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Exit node for mobile/automotive use</div>
+      </div>
+
+      <h2>Key Components</h2>
+
+      <h3>Nginx Reverse Proxy</h3>
+      <p>
+        All web-facing services sit behind a single Nginx instance that handles SSL termination, 
+        virtual host routing, and rate limiting. I manage SSL certificates via Let's Encrypt 
+        with automated renewal. This setup lets me run multiple domains and subdomains from a 
+        single public IP without port conflicts.
+      </p>
+
+      <h3>Docker Compose Workflows</h3>
+      <p>
+        Services are defined in Docker Compose files with pinned versions, health checks, 
+        and restart policies. I use named volumes for persistent data and bridge networks 
+        to isolate services. The compose files are version-controlled in GitHub so I can 
+        rebuild the entire stack from scratch if needed.
+      </p>
+
+      <h3>Tailscale VPN Mesh</h3>
+      <p>
+        Rather than opening ports to the public internet, I route all administrative access 
+        through Tailscale. This gives me a zero-config WireGuard mesh with mutual TLS auth. 
+        I access the NAS, monitoring dashboards, and management consoles exclusively through 
+        the tailnet &mdash; no exposed management interfaces.
+      </p>
+
+      <h3>DNS &amp; Uptime Monitoring</h3>
+      <p>
+        External DNS is managed through Netlify DNS with proper A/AAAA records, CNAMEs, 
+        and MX records for email. I run a lightweight uptime checker that pings each 
+        service every 5 minutes and sends alerts on failure. This taught me more about 
+        DNS propagation, TTL tuning, and failover than any course could.
+      </p>
+
+      <h2>Services Running</h2>
+      <ul>
+        <li><strong>Personal Portfolio</strong> &mdash; edwardclark.shop (Netlify-hosted, proxied through the lab)</li>
+        <li><strong>BrightLayer Studio</strong> &mdash; brightlayer.netlify.app (client-facing business site)</li>
+        <li><strong>Plex Media Server</strong> &mdash; Media streaming for personal use via Tailscale auth</li>
+        <li><strong>Home Assistant</strong> &mdash; Home automation with custom integrations</li>
+        <li><strong>NAS</strong> &mdash; 4 TB network storage with SMB/NFS shares</li>
+        <li><strong>Uptime Monitor</strong> &mdash; Internal dashboard tracking service health</li>
+      </ul>
+
+      <h2>Lessons Learned</h2>
+
+      <div class="lesson-box">
+        <h3>SSL renewal taught me cron + systemd</h3>
+        <p>
+          I originally ran certbot manually. When the first certificate expired at 3 AM, I 
+          learned to automate renewals with systemd timers. Now I treat everything as 
+          code &mdash; no manual steps in the entire stack.
+        </p>
+      </div>
+
+      <div class="lesson-box">
+        <h3>Storage backup strategy matters</h3>
+        <p>
+          I lost a Docker volume once due to a bad update. Now I run nightly rsync jobs 
+          to the NAS with 7-day retention. The restore process is documented and tested.
+        </p>
+      </div>
+
+      <div class="lesson-box">
+        <h3>Segregation prevents cascading failures</h3>
+        <p>
+          Early on, everything ran on one VM. When Plex transcoded and ate all the RAM, 
+          every service went down. Moving to per-service VMs with resource limits fixed 
+          this. Proxmox's cgroup limits are now my standard practice.
+        </p>
+      </div>
+
+      <div class="lesson-box">
+        <h3>Monitoring is non-negotiable</h3>
+        <p>
+          I added uptime monitoring after discovering a service had been down for 3 days 
+          without me noticing. A simple HTTP check + email alert now catches issues 
+          within minutes. This is the kind of reliability ops teams care about.
+        </p>
+      </div>
+
+      <h2>What I'd Do Differently</h2>
+      <p>
+        If I rebuilt today, I'd adopt <strong>Kubernetes (K3s)</strong> for container 
+        orchestration and <strong>Terraform</strong> for infrastructure-as-code. The Docker 
+        Compose setup works well but doesn't scale to multi-node. I'm currently evaluating 
+        K3s for the next iteration &mdash; the control plane concepts transfer directly 
+        to AWS EKS, which aligns with my AWS cert.
+      </p>
+
+      <p style="margin-top: 48px;">
+        <a href="/" class="btn btn-primary">&larr; Back to Portfolio</a>
+        <a href="https://github.com/null8878" class="btn btn-outline" target="_blank" rel="noopener">View GitHub &#8599;</a>
+      </p>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      Edward Clark &mdash; <a href="/">edwardclark.shop</a>
+    </div>
+  </footer>
+</body>
+</html>

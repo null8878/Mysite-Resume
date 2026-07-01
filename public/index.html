@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edward Clark — Software Developer & IT Consultant | Indianapolis</title>
+  <meta name="description" content="Edward Clark — Software Developer & IT Consultant in Indianapolis. AWS Certified. Python, React, Docker, Nginx, full-stack development and self-hosted infrastructure. Open for hire and contract work.">
+  <meta name="keywords" content="Edward Clark, software developer, IT consultant, Indianapolis, full-stack developer, Python developer, React developer, Docker, AWS, homelab, DevOps, IT specialist, freelance developer Indianapolis, cloud infrastructure, Nginx, Tailscale, REST API">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Edward Clark — Software Developer & IT Consultant | Indianapolis">
+  <meta property="og:description" content="Full-stack developer & IT consultant in Indianapolis. Python, React, Docker, AWS Certified. Open to hire and contract work.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.edwardclark.shop">
+  <meta property="og:image" content="https://www.edwardclark.shop/og-image.png">
+  <link rel="canonical" href="https://www.edwardclark.shop">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Edward Clark",
+    "givenName": "Edward",
+    "familyName": "Clark",
+    "jobTitle": "Software Developer & IT Consultant",
+    "telephone": "(317) 772-8062",
+    "email": "eclark101@ivytech.edu",
+    "address": { "@type": "PostalAddress", "addressLocality": "Indianapolis", "addressRegion": "IN", "addressCountry": "US" },
+    "url": "https://www.edwardclark.shop",
+    "sameAs": [
+      "https://github.com/null8878",
+      "https://linkedin.com/in/edward-clark-s-dev",
+      "https://brightlayer.netlify.app"
+    ],
+    "knowsAbout": ["Python", "JavaScript", "TypeScript", "React", "Docker", "AWS", "Flask", "Django", "Node.js", "Linux", "Nginx", "REST APIs", "CI/CD", "PostgreSQL", "Tailscale VPN"],
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "Ivy Tech Community College" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #09090b;
+      color: #e4e4e7;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(9,9,11,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid #1f1f23;
+    }
+    nav .container {
+      display: flex; justify-content: space-between; align-items: center;
+      height: 64px;
+    }
+    nav .logo { font-weight: 700; font-size: 1.2rem; color: #fff; text-decoration: none; }
+    nav .logo span { color: #6366f1; }
+    .nav-links { display: flex; gap: 6px; }
+    nav a:not(.logo) {
+      color: #a1a1aa; text-decoration: none; padding: 6px 14px;
+      font-size: 0.9rem; border-radius: 6px; transition: all 0.2s;
+    }
+    nav a:not(.logo):hover { color: #fff; background: #1f1f23; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: #a1a1aa; border-radius: 2px; transition: all 0.3s;
+    }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    .btn-calendly {
+      background: transparent; color: #22c55e; border: 1px solid #22c55e;
+    }
+    .btn-calendly:hover { background: rgba(34,197,94,0.1); transform: translateY(-1px); }
+    .btn {
+      display: inline-block; padding: 10px 24px; border-radius: 8px;
+      font-weight: 600; font-size: 0.9rem; text-decoration: none;
+      transition: all 0.2s; cursor: pointer; border: none;
+    }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-primary:hover { background: #4f46e5; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(99,102,241,0.3); }
+    .btn-outline { background: transparent; color: #e4e4e7; border: 1px solid #27272a; }
+    .btn-outline:hover { border-color: #6366f1; color: #fff; background: rgba(99,102,241,0.05); }
+    .btn-ghost { background: transparent; color: #a1a1aa; border: 1px solid transparent; }
+    .btn-ghost:hover { color: #fff; border-color: #27272a; }
+    .btn-sm { padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding-top: 64px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50%; right: -20%;
+      width: 600px; height: 600px; background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { max-width: 720px; position: relative; }
+    .hero .tag {
+      display: inline-block; padding: 4px 14px; border-radius: 999px;
+      background: rgba(99,102,241,0.1); color: #818cf8;
+      font-size: 0.8rem; font-weight: 600; margin-bottom: 20px;
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+    .hero h1 {
+      font-size: 3.5rem; font-weight: 800; line-height: 1.1;
+      margin-bottom: 20px; letter-spacing: -0.02em;
+    }
+    .hero h1 span { color: #6366f1; }
+    .hero p {
+      font-size: 1.15rem; color: #a1a1aa; margin-bottom: 32px;
+      max-width: 600px;
+    }
+    .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero .contact-row {
+      display: flex; gap: 20px; flex-wrap: wrap; margin-top: 28px;
+      font-size: 0.9rem; color: #71717a;
+    }
+    .hero .contact-row a { color: #a1a1aa; text-decoration: none; transition: color 0.2s; }
+    .hero .contact-row a:hover { color: #818cf8; }
+
+    /* Sections */
+    section { padding: 100px 0; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #6366f1; margin-bottom: 12px;
+    }
+    h2 {
+      font-size: 2rem; font-weight: 700; margin-bottom: 48px;
+      letter-spacing: -0.01em;
+    }
+    .reveal { opacity: 0; transform: translateY(24px); transition: all 0.6s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Capabilities */
+    .caps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .cap-card {
+      background: #141416; border: 1px solid #1f1f23;
+      border-radius: 12px; padding: 28px; transition: all 0.2s;
+    }
+    .cap-card:hover { border-color: #27272a; transform: translateY(-2px); }
+    .cap-card .icon { font-size: 1.5rem; margin-bottom: 12px; display: block; }
+    .cap-card h3 { font-size: 1rem; margin-bottom: 8px; }
+    .cap-card p { color: #a1a1aa; font-size: 0.85rem; line-height: 1.5; }
+
+    /* Skills */
+    .skills-section { background: #0c0c0e; }
+    .skills-group { margin-bottom: 32px; }
+    .skills-group:last-child { margin-bottom: 0; }
+    .skills-group h3 {
+      font-size: 0.8rem; font-weight: 600; color: #71717a;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;
+    }
+    .skills-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .skill-item {
+      padding: 6px 14px; border-radius: 6px;
+      background: #141416; border: 1px solid #1f1f23;
+      font-size: 0.85rem; font-weight: 500; transition: all 0.2s;
+    }
+    .skill-item:hover { border-color: #6366f1; background: rgba(99,102,241,0.05); color: #818cf8; }
+
+    /* Projects */
+    .project-card {
+      background: #141416; border: 1px solid #1f1f23;
+      border-radius: 12px; padding: 28px; margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .project-card:hover { border-color: #27272a; }
+    .project-card .meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px; font-size: 0.8rem; color: #71717a;
+    }
+    .project-card .badge {
+      padding: 2px 10px; border-radius: 999px;
+      background: rgba(99,102,241,0.1); color: #818cf8;
+      font-size: 0.75rem; font-weight: 600;
+    }
+    .project-card .badge-green {
+      background: rgba(34,197,94,0.1); color: #4ade80;
+    }
+    .project-card h3 { font-size: 1.2rem; margin-bottom: 4px; }
+    .project-card .subtitle { color: #6366f1; font-size: 0.85rem; margin-bottom: 8px; }
+    .project-card p { color: #a1a1aa; font-size: 0.9rem; line-height: 1.6; }
+    .project-card .tech { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+    .project-card .tech span {
+      padding: 3px 10px; border-radius: 6px;
+      background: #1f1f23; font-size: 0.75rem; color: #a1a1aa;
+    }
+    .project-card .links { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* Education */
+    .edu-item {
+      background: #141416; border: 1px solid #1f1f23;
+      border-radius: 12px; padding: 24px; margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .edu-item:hover { border-color: #27272a; }
+    .edu-item h3 { font-size: 1rem; margin-bottom: 4px; }
+    .edu-item .sub { color: #818cf8; font-size: 0.85rem; }
+    .edu-item .detail { color: #a1a1aa; font-size: 0.85rem; margin-top: 8px; }
+
+    /* Experience */
+    .exp-item {
+      padding: 24px 0; border-bottom: 1px solid #1f1f23;
+    }
+    .exp-item:last-child { border-bottom: none; }
+    .exp-item .head {
+      display: flex; justify-content: space-between; flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .exp-item .head h3 { font-size: 1rem; }
+    .exp-item .head .date { color: #71717a; font-size: 0.85rem; }
+    .exp-item .sub { color: #818cf8; font-size: 0.85rem; margin-bottom: 8px; }
+    .exp-item p { color: #a1a1aa; font-size: 0.9rem; line-height: 1.6; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #1f1f23; padding: 32px 0;
+      text-align: center; color: #71717a; font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      h2 { font-size: 1.5rem; }
+      .hamburger { display: flex; }
+      .nav-links {
+        position: fixed; top: 64px; left: 0; right: 0;
+        background: rgba(9,9,11,0.98); backdrop-filter: blur(12px);
+        border-bottom: 1px solid #1f1f23;
+        flex-direction: column; padding: 16px; gap: 4px;
+        transform: translateY(-110%); transition: transform 0.3s;
+        display: flex;
+      }
+      .nav-links.open { transform: translateY(0); }
+      nav a:not(.logo) { padding: 10px 14px; }
+      .caps-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .hero .actions { flex-direction: column; }
+      .hero .actions .btn { width: 100%; text-align: center; }
+      .hero .contact-row { gap: 12px; font-size: 0.8rem; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="#" class="logo">Edward<span>Clark</span></a>
+      <button class="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="#capabilities">Services</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#education">Education</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="tag">&#9679; Available for Hire &mdash; Indianapolis, IN</div>
+      <h1>Software Developer &amp;<br><span>IT Consultant</span></h1>
+      <p>
+        Full-stack developer with hands-on infrastructure experience. I build 
+        production applications, run a self-hosted homelab, and deliver IT solutions 
+        for small businesses &mdash; from REST APIs and Docker deployments to secure 
+        VPN tunnels and live web services.
+      </p>
+      <div class="actions">
+        <a href="mailto:eclark101@ivytech.edu" class="btn btn-primary">Hire Me</a>
+        <a href="/resume.pdf" class="btn btn-outline" target="_blank" rel="noopener">Download Resume</a>
+        <a href="https://calendly.com/1edwardclark" class="btn btn-calendly" target="_blank" rel="noopener">&#128197; Book a Call</a>
+        <a href="https://github.com/null8878" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://brightlayer.netlify.app" class="btn btn-ghost" target="_blank" rel="noopener">BrightLayer Studio &#8599;</a>
+      </div>
+      <div class="contact-row">
+        <span>Indianapolis, IN</span>
+        <a href="tel:3177728062">(317) 772-8062</a>
+        <a href="mailto:eclark101@ivytech.edu">eclark101@ivytech.edu</a>
+        <a href="https://linkedin.com/in/edward-clark-s-dev" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="capabilities">
+    <div class="container reveal">
+      <div class="section-label">How I Can Help</div>
+      <h2>IT Consulting &amp; Development Services</h2>
+      <div class="caps-grid">
+        <div class="cap-card">
+          <span class="icon">&#9729;</span>
+          <h3>Infrastructure &amp; Cloud</h3>
+          <p>Docker containerization, AWS deployment (EC2, S3, IAM), Nginx reverse proxy, SSL/TLS, DNS management, and bare-metal server setup.</p>
+        </div>
+        <div class="cap-card">
+          <span class="icon">&lt;/&gt;</span>
+          <h3>Web Development</h3>
+          <p>Full-stack applications with Python (Flask, Django), Node.js (Express), and React. REST API design, database integration, and CI/CD pipelines.</p>
+        </div>
+        <div class="cap-card">
+          <span class="icon">&#128274;</span>
+          <h3>IT Security &amp; Networking</h3>
+          <p>Tailscale VPN configuration, firewall rules, secure remote access, IMAP/email security, and security-first API development with token auth.</p>
+        </div>
+        <div class="cap-card">
+          <span class="icon">&#128187;</span>
+          <h3>Small Business IT</h3>
+          <p>Website launch in 14 days, domain &amp; email setup, NAS storage, Home Assistant, Plex media servers, and ongoing infrastructure maintenance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="skills-section">
+    <div class="container reveal">
+      <div class="section-label">Expertise</div>
+      <h2>Technical Skills</h2>
+
+      <div class="skills-group">
+        <h3>Languages</h3>
+        <div class="skills-grid">
+          <span class="skill-item">Python</span>
+          <span class="skill-item">JavaScript</span>
+          <span class="skill-item">TypeScript</span>
+          <span class="skill-item">HTML/CSS</span>
+          <span class="skill-item">SQL</span>
+          <span class="skill-item">Bash</span>
+        </div>
+      </div>
+
+      <div class="skills-group">
+        <h3>Backend &amp; API</h3>
+        <div class="skills-grid">
+          <span class="skill-item">Node.js</span>
+          <span class="skill-item">Flask</span>
+          <span class="skill-item">Django</span>
+          <span class="skill-item">Express.js</span>
+          <span class="skill-item">REST API Design</span>
+        </div>
+      </div>
+
+      <div class="skills-group">
+        <h3>Frontend</h3>
+        <div class="skills-grid">
+          <span class="skill-item">React</span>
+          <span class="skill-item">TypeScript</span>
+          <span class="skill-item">Responsive Design</span>
+        </div>
+      </div>
+
+      <div class="skills-group">
+        <h3>Infrastructure &amp; Cloud</h3>
+        <div class="skills-grid">
+          <span class="skill-item">Docker</span>
+          <span class="skill-item">AWS (EC2, S3, IAM)</span>
+          <span class="skill-item">Nginx</span>
+          <span class="skill-item">Linux</span>
+          <span class="skill-item">Tailscale VPN</span>
+          <span class="skill-item">CI/CD</span>
+        </div>
+      </div>
+
+      <div class="skills-group">
+        <h3>Tools &amp; Databases</h3>
+        <div class="skills-grid">
+          <span class="skill-item">PostgreSQL</span>
+          <span class="skill-item">Git/GitHub</span>
+          <span class="skill-item">Netlify</span>
+          <span class="skill-item">SQLite</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="container reveal">
+      <div class="section-label">Portfolio</div>
+      <h2>Projects</h2>
+
+      <div class="project-card">
+        <div class="meta"><span>Self-Hosted Homelab</span><span class="badge badge-green">Ongoing</span></div>
+        <h3>Production Infrastructure</h3>
+        <p>Architected and deployed bare-metal hypervisors with VMs and Docker containers running 24/7. Configured Tailscale VPN for encrypted remote access, NAS storage, Plex, Home Assistant, and live web servers with Nginx reverse proxy. Manages DNS, SSL, and uptime monitoring across all services.</p>
+        <div class="tech"><span>Docker</span><span>Nginx</span><span>Linux</span><span>Tailscale</span><span>NAS</span><span>Proxmox</span></div>
+        <div class="links">
+          <a href="https://github.com/null8878" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">GitHub Profile &#8599;</a>
+          <a href="/homelab.html" class="btn btn-outline btn-sm">Read Case Study &#8599;</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="meta"><span>BrightLayer Studio</span><span class="badge badge-green">Live</span></div>
+        <h3>Web Design &amp; Development Agency</h3>
+        <p>Launched a conversion-focused web design agency offering 14-day delivery for small business websites. Built with mobile-first design, SEO optimization, and transparent pricing. Integrates Google Maps API, payment gateways, and live data feeds.</p>
+        <div class="tech"><span>JavaScript</span><span>HTML/CSS</span><span>Netlify</span><span>SEO</span></div>
+        <div class="links">
+          <a href="https://brightlayer.netlify.app" class="btn btn-primary btn-sm" target="_blank" rel="noopener">Live Site &#8599;</a>
+          <a href="https://github.com/null8878/brightlayer-site" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Source Code &#8599;</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="meta"><span>Split Smart Expense Tracker</span><span class="badge">Team Lead</span></div>
+        <h3>Full-Stack REST API</h3>
+        <p>Built expense tracking app with Flask REST API and SQLite database. Led 4-person Agile team with sprint planning via Trello, code reviews, and pull requests via GitHub.</p>
+        <div class="tech"><span>Python</span><span>Flask</span><span>SQLite</span><span>JavaScript</span></div>
+        <div class="links">
+          <a href="https://github.com/null8878/SDEV_220_Final_Project_Team_C" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Source Code &#8599;</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="meta"><span>Email Nuker Tool</span><span class="badge">Solo</span></div>
+        <h3>Multithreaded Desktop App</h3>
+        <p>Gmail inbox management tool using IMAP protocol with multithreaded processing, keyword filtering, and real-time logging. Handles high-latency IMAP calls efficiently.</p>
+        <div class="tech"><span>Python</span><span>Tkinter</span><span>IMAP</span><span>Threading</span></div>
+        <div class="links">
+          <a href="https://github.com/null8878?tab=repositories" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">View Repos &#8599;</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="meta"><span>Django API Security</span><span class="badge">Solo</span></div>
+        <h3>Secure REST API</h3>
+        <p>Django REST API with token authentication, input validation, and secure file handling &mdash; demonstrating security-first development patterns for production web services.</p>
+        <div class="tech"><span>Python</span><span>Django</span><span>REST</span><span>Auth</span></div>
+        <div class="links">
+          <a href="https://github.com/null8878/Live-Django_App" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Source Code &#8599;</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="meta"><span>Course Enrollment System</span><span class="badge">Team</span></div>
+        <h3>React Student Portal</h3>
+        <p>React-based UI for student enrollment workflows with dynamic components, form validation, and Git-based team collaboration using pull requests and code reviews.</p>
+        <div class="tech"><span>React</span><span>JavaScript</span><span>HTML/CSS</span></div>
+        <div class="links">
+          <a href="https://github.com/null8878/Group-1-Project" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Source Code &#8599;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="container reveal">
+      <div class="section-label">Education &amp; Certifications</div>
+      <h2>Credentials</h2>
+
+      <div class="edu-item">
+        <h3>Software Development &mdash; Technical Certificate</h3>
+        <div class="sub">Ivy Tech Community College</div>
+        <div class="detail">GPA 3.7 &middot; Dean's List Summer 2025 &middot; Graduated Dec 2025</div>
+      </div>
+
+      <div class="edu-item">
+        <h3>AWS Certified Cloud Practitioner</h3>
+        <div class="sub">Amazon Web Services</div>
+        <div class="detail">Foundational cloud certification covering EC2, S3, IAM, and AWS architecture</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="container reveal">
+      <div class="section-label">Career</div>
+      <h2>Experience</h2>
+
+      <div class="exp-item">
+        <div class="head"><h3>BrightLayer Studio</h3><span class="date">2025 &mdash; Present</span></div>
+        <div class="sub">Founder &amp; Web Consultant &mdash; Indianapolis, IN</div>
+        <p>Launch and manage a web design agency serving small businesses. Deliver mobile-first, SEO-optimized websites on a 14-day timeline. Handle full lifecycle from discovery call through deployment, DNS configuration, SSL setup, and post-launch support.</p>
+      </div>
+
+      <div class="exp-item">
+        <div class="head"><h3>Hucks Service Station</h3><span class="date">Jun 2020 &mdash; Present</span></div>
+        <div class="sub">Customer Service Associate &mdash; Fortville, IN</div>
+        <p>Troubleshoot POS systems, payment interfaces, and network connectivity issues across 200+ daily transactions. Maintain 99.8% financial reconciliation accuracy. Manage digital rewards platform enrollment for 256+ customers.</p>
+      </div>
+
+      <div class="exp-item">
+        <div class="head"><h3>Amazon DSP</h3><span class="date">2019 &mdash; 2021</span></div>
+        <div class="sub">Delivery &amp; Fulfillment &mdash; Indianapolis, IN</div>
+        <p>Managed digital order systems for packing, labeling, and shipping logistics. Operated delivery routes with consistent on-time performance using GPS-optimized routing.</p>
+      </div>
+
+      <div class="exp-item">
+        <div class="head"><h3>Meijer</h3><span class="date">Jan 2019 &mdash; Mar 2021</span></div>
+        <div class="sub">Inventory Specialist &mdash; Indianapolis, IN</div>
+        <p>Used inventory management systems to analyze product movement trends. Resolved discrepancies and maintained accurate stock counts across digital tracking platforms.</p>
+      </div>
+
+      <div class="exp-item">
+        <div class="head"><h3>Self-Employed</h3><span class="date">Jan 2018 &mdash; Present</span></div>
+        <div class="sub">Independent Contractor &mdash; Logistics</div>
+        <p>Completed 12,000+ deliveries with a 4.9-star rating. Built route optimization systems using GPS and mobile technology to maximize efficiency.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" style="padding: 60px 0 80px;">
+    <div class="container reveal" style="text-align: center;">
+      <div class="section-label">Get in Touch</div>
+      <h2 style="margin-bottom: 16px;">Looking for a Developer or IT Consultant?</h2>
+      <p style="color: #a1a1aa; max-width: 500px; margin: 0 auto 32px;">
+        I&rsquo;m actively looking for software development and IT roles in the Indianapolis area. 
+        Remote work and contract projects also considered. Let&rsquo;s talk about what you need.
+      </p>
+      <div class="actions" style="justify-content: center;">
+        <a href="mailto:eclark101@ivytech.edu" class="btn btn-primary">Email Me</a>
+        <a href="https://calendly.com/1edwardclark" class="btn btn-calendly" target="_blank" rel="noopener">&#128197; Book a 15-min Call</a>
+        <a href="https://linkedin.com/in/edward-clark-s-dev" class="btn btn-outline" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="/resume.pdf" class="btn btn-outline" target="_blank" rel="noopener">Resume PDF</a>
+        <a href="https://brightlayer.netlify.app/quote" class="btn btn-ghost" target="_blank" rel="noopener">Get a Web Quote &#8599;</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      Edward Clark &mdash; Available for hire in Indianapolis, IN. Remote welcome.
+    </div>
+  </footer>
+
+  <script>
+    // Mobile hamburger menu
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Close mobile menu on resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
