@@ -10,6 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy to Netlify
-        run: |
-          npm install -g netlify-cli
-          netlify deploy --prod --dir=public --site 5f0ae365-5a87-42d5-bf3e-7abd1bb1578d --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: public
+          production-deploy: true
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Auto-deploy from GitHub Actions"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: 5f0ae365-5a87-42d5-bf3e-7abd1bb1578d
