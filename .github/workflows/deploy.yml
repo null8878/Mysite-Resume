@@ -8,6 +8,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Netlify build
+      - uses: actions/checkout@v4
+      - name: Deploy to Netlify
         run: |
-          curl -X POST "https://api.netlify.com/build_hooks/6a4575356d0a66fb65ad9fbf"
+          npm install -g netlify-cli
+          netlify deploy --prod --dir=public --site 5f0ae365-5a87-42d5-bf3e-7abd1bb1578d --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}
