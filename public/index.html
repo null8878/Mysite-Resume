@@ -33,7 +33,7 @@
     "sameAs": [
       "https://github.com/null8878",
       "https://linkedin.com/in/edward-clark-s-dev",
-      "https://brightlayer.netlify.app"
+      "https://brightlayer-site.netlify.app"
     ],
     "knowsAbout": ["Python", "JavaScript", "TypeScript", "React", "Docker", "AWS", "Flask", "Django", "Node.js", "Linux", "Nginx", "REST APIs", "CI/CD", "PostgreSQL", "Tailscale VPN"],
     "alumniOf": { "@type": "CollegeOrUniversity", "name": "Ivy Tech Community College" }
@@ -296,7 +296,7 @@
         <a href="/resume.pdf" class="btn btn-outline" target="_blank" rel="noopener">Download Resume</a>
         <a href="https://calendly.com/1edwardclark" class="btn btn-calendly" target="_blank" rel="noopener">&#128197; Book a Call</a>
         <a href="https://github.com/null8878" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://brightlayer.netlify.app" class="btn btn-ghost" target="_blank" rel="noopener">BrightLayer Studio &#8599;</a>
+        <a href="https://brightlayer-site.netlify.app" class="btn btn-ghost" target="_blank" rel="noopener">BrightLayer Studio &#8599;</a>
       </div>
       <div class="contact-row">
         <span>Indianapolis, IN</span>
@@ -419,7 +419,7 @@
         <p>Launched a conversion-focused web design agency offering 14-day delivery for small business websites. Built with mobile-first design, SEO optimization, and transparent pricing. Integrates Google Maps API, payment gateways, and live data feeds.</p>
         <div class="tech"><span>JavaScript</span><span>HTML/CSS</span><span>Netlify</span><span>SEO</span></div>
         <div class="links">
-          <a href="https://brightlayer.netlify.app" class="btn btn-primary btn-sm" target="_blank" rel="noopener">Live Site &#8599;</a>
+          <a href="https://brightlayer-site.netlify.app" class="btn btn-primary btn-sm" target="_blank" rel="noopener">Live Site &#8599;</a>
           <a href="https://github.com/null8878/brightlayer-site" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Source Code &#8599;</a>
         </div>
       </div>
@@ -462,6 +462,16 @@
         <div class="links">
           <a href="https://github.com/null8878/Group-1-Project" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Source Code &#8599;</a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="activity">
+    <div class="container reveal">
+      <div class="section-label">Open Source</div>
+      <h2>Latest Code Activity</h2>
+      <div id="github-activity" style="display:flex;flex-direction:column;gap:12px;">
+        <div style="color:#71717a;font-size:0.9rem;">Loading...</div>
       </div>
     </div>
   </section>
@@ -527,15 +537,31 @@
       <div class="section-label">Get in Touch</div>
       <h2 style="margin-bottom: 16px;">Looking for a Developer or IT Consultant?</h2>
       <p style="color: #a1a1aa; max-width: 500px; margin: 0 auto 32px;">
-        I&rsquo;m actively looking for software development and IT roles in the Indianapolis area. 
+        I&rsquo;m actively looking for software development and IT roles in the Indianapolis area.
         Remote work and contract projects also considered. Let&rsquo;s talk about what you need.
       </p>
+      <form id="contact-form" style="max-width: 480px; margin: 0 auto 32px; text-align: left;">
+        <div style="margin-bottom: 14px;">
+          <input type="text" name="name" placeholder="Your Name" required
+            style="width:100%;padding:12px 16px;background:#141416;border:1px solid #1f1f23;border-radius:8px;color:#e4e4e7;font-size:0.9rem;font-family:inherit;outline:none;transition:border-color 0.2s;">
+        </div>
+        <div style="margin-bottom: 14px;">
+          <input type="email" name="email" placeholder="Your Email" required
+            style="width:100%;padding:12px 16px;background:#141416;border:1px solid #1f1f23;border-radius:8px;color:#e4e4e7;font-size:0.9rem;font-family:inherit;outline:none;transition:border-color 0.2s;">
+        </div>
+        <div style="margin-bottom: 14px;">
+          <textarea name="message" placeholder="Your Message" rows="4" required
+            style="width:100%;padding:12px 16px;background:#141416;border:1px solid #1f1f23;border-radius:8px;color:#e4e4e7;font-size:0.9rem;font-family:inherit;outline:none;transition:border-color 0.2s;resize:vertical;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
+        <div id="form-status" style="margin-top:12px;font-size:0.85rem;display:none;"></div>
+      </form>
       <div class="actions" style="justify-content: center;">
-        <a href="mailto:contact@edwardclark.shop" class="btn btn-primary">Email Me</a>
+        <a href="mailto:contact@edwardclark.shop" class="btn btn-outline">Email Directly</a>
         <a href="https://calendly.com/1edwardclark" class="btn btn-calendly" target="_blank" rel="noopener">&#128197; Book a 15-min Call</a>
         <a href="https://linkedin.com/in/edward-clark-s-dev" class="btn btn-outline" target="_blank" rel="noopener">LinkedIn</a>
         <a href="/resume.pdf" class="btn btn-outline" target="_blank" rel="noopener">Resume PDF</a>
-        <a href="https://brightlayer.netlify.app/quote" class="btn btn-ghost" target="_blank" rel="noopener">Get a Web Quote &#8599;</a>
+        <a href="https://brightlayer-site.netlify.app/quote" class="btn btn-ghost" target="_blank" rel="noopener">Get a Web Quote &#8599;</a>
       </div>
     </div>
   </section>
@@ -543,7 +569,10 @@
   <footer>
     <div class="container">
       <div>Edward Clark &mdash; Available for hire in Indianapolis, IN. Remote welcome.</div>
-      <div style="margin-top:8px;font-size:0.8rem;color:#52525b;">
+      <div style="margin-top:8px;font-size:0.8rem;color:#52525b;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <span id="uptime-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#52525b;" title="Server status"></span>
+        <span id="uptime-text" style="font-size:0.75rem;">Server checking...</span>
+        <span style="color:#52525b;">&middot;</span>
         <a href="https://github.com/null8878" target="_blank" rel="noopener" style="color:#6366f1;text-decoration:none;">&#9998; Actively coding</a>
       </div>
     </div>
@@ -582,6 +611,119 @@
         navLinks.classList.remove('open');
       }
     });
+
+    // --- Contact Form API ---
+    document.getElementById('contact-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const status = document.getElementById('form-status');
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      status.style.display = 'none';
+
+      try {
+        const res = await fetch('/.netlify/functions/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.name.value.trim(),
+            email: form.email.value.trim(),
+            message: form.message.value.trim()
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          status.textContent = 'Thanks! Your message was sent successfully.';
+          status.style.color = '#4ade80';
+          form.reset();
+        } else {
+          status.textContent = data.error || 'Something went wrong. Try emailing me directly.';
+          status.style.color = '#f87171';
+        }
+      } catch {
+        status.textContent = 'Network error. Please email me at contact@edwardclark.shop';
+        status.style.color = '#f87171';
+      }
+      status.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+    });
+
+    // --- GitHub Activity Feed ---
+    async function loadGitHubActivity() {
+      const container = document.getElementById('github-activity');
+      if (!container) return;
+      try {
+        const res = await fetch('https://api.github.com/users/null8878/events/public?per_page=5');
+        if (!res.ok) throw new Error('GitHub API error');
+        const events = await res.json();
+        if (!events.length) {
+          container.innerHTML = '<div style="color:#71717a;font-size:0.9rem;">No recent public activity.</div>';
+          return;
+        }
+        container.innerHTML = events.map(event => {
+          const icons = { PushEvent: '\u{1F4DD}', CreateEvent: '\u{1F4C2}', IssuesEvent: '\u{1F527}', PullRequestEvent: '\u{1F500}', WatchEvent: '\u2B50', ForkEvent: '\u{1F374}' };
+          const icon = icons[event.type] || '\u{1F4CC}';
+          const repo = event.repo.name;
+          const date = new Date(event.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          let desc = event.type.replace('Event', '');
+          if (event.type === 'PushEvent') {
+            const count = event.payload.commits ? event.payload.commits.length : 0;
+            desc = `Pushed ${count} commit${count > 1 ? 's' : ''} to ${repo}`;
+          } else if (event.type === 'CreateEvent') {
+            desc = `Created ${event.payload.ref_type} in ${repo}`;
+          } else if (event.type === 'IssuesEvent') {
+            desc = `${event.payload.action} issue in ${repo}`;
+          } else if (event.type === 'PullRequestEvent') {
+            desc = `${event.payload.action} PR in ${repo}`;
+          }
+          return `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#141416;border:1px solid #1f1f23;border-radius:8px;">
+            <span style="font-size:1.1rem;">${icon}</span>
+            <span style="flex:1;font-size:0.9rem;">${desc}</span>
+            <span style="color:#71717a;font-size:0.8rem;white-space:nowrap;">${date}</span>
+          </div>`;
+        }).join('');
+      } catch {
+        container.innerHTML = '<div style="color:#71717a;font-size:0.9rem;">Unable to load GitHub activity.</div>';
+      }
+    }
+    loadGitHubActivity();
+
+    // --- Server Uptime Status ---
+    async function checkUptime() {
+      const dot = document.getElementById('uptime-dot');
+      const text = document.getElementById('uptime-text');
+      if (!dot || !text) return;
+
+      const url = 'https://zero-day.tail0ece29.ts.net/api/uptime';
+
+      if (!url || url === 'UPTIME_API_URL_PLACEHOLDER') {
+        text.textContent = '';
+        dot.style.display = 'none';
+        return;
+      }
+
+      try {
+        const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+        if (!res.ok) throw new Error('Server unreachable');
+        const data = await res.json();
+        if (data.status === 'ok') {
+          dot.style.background = '#4ade80';
+          dot.style.boxShadow = '0 0 6px rgba(74,222,128,0.6)';
+          text.textContent = `Server up ${data.uptime}`;
+          text.style.color = '#4ade80';
+        } else {
+          throw new Error('Bad status');
+        }
+      } catch {
+        dot.style.background = '#52525b';
+        dot.style.boxShadow = 'none';
+        text.textContent = 'Server offline';
+        text.style.color = '#52525b';
+      }
+    }
+    checkUptime();
   </script>
 </body>
 </html>

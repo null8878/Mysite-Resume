@@ -2,6 +2,7 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const HTTP_PORT = 3000;
 const HTTPS_PORT = 3443;
@@ -19,6 +20,36 @@ const mimeTypes = {
 };
 
 const handler = (req, res) => {
+  if (req.url === '/api/uptime' && req.method === 'GET') {
+    const uptime = os.uptime();
+    const days = Math.floor(uptime / 86400);
+    const hours = Math.floor((uptime % 86400) / 3600);
+    const minutes = Math.floor((uptime % 3600) / 60);
+    const data = JSON.stringify({
+      status: 'ok',
+      uptime: `${days}d ${hours}h ${minutes}m`,
+      started: new Date(Date.now() - uptime * 1000).toISOString()
+    });
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
+    res.end(data);
+    return;
+  }
+
+  if (req.url === '/api/uptime' && req.method === 'OPTIONS') {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
+    res.end();
+    return;
+  }
+
   let filePath = path.join(__dirname, 'public', req.url === '/' ? 'index.html' : req.url);
   const ext = path.extname(filePath);
   const contentType = mimeTypes[ext] || 'application/octet-stream';
