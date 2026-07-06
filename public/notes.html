@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes — Edward Clark</title>
+  <meta name="description" content="Short technical writeups from Edward Clark: self-hosting mail, Lambda cold-start tuning, on-call runbooks. The kind of postmortem a teammate would actually read.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Notes — Edward Clark">
+  <meta property="og:description" content="Self-hosting mail. Lambda cold starts. An on-call runbook.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://edwardclark.shop/notes.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Notes — Edward Clark">
+  <meta name="twitter:description" content="Short technical writeups. Postmortems that read like the kind a teammate would actually write.">
+  <link rel="canonical" href="https://edwardclark.shop/notes.html">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#07070a">
+  <meta name="color-scheme" content="dark">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Blog",
+    "name":"Notes — Edward Clark",
+    "url":"https://edwardclark.shop/notes.html",
+    "description":"Short technical writeups from Edward Clark: self-hosting mail, Lambda cold-start tuning, on-call runbooks.",
+    "author":{"@type":"Person","name":"Edward Clark","jobTitle":"Software Developer & AWS Infrastructure Consultant","sameAs":["https://github.com/null8878","https://linkedin.com/in/edward-clark-s-dev"]},
+    "inLanguage":"en-US",
+    "blogPost":[
+      {"@type":"BlogPosting","headline":"Why I self-host mail (and why you probably shouldn&#x2019;t)","datePublished":"2026-04-12","url":"https://edwardclark.shop/notes.html#self-host-mail"},
+      {"@type":"BlogPosting","headline":"Making contact-form Lambda feel snappy","datePublished":"2026-05-22","url":"https://edwardclark.shop/notes.html#lambda-cold-start"},
+      {"@type":"BlogPosting","headline":"An on-call runbook I actually wrote","datePublished":"2026-06-30","url":"https://edwardclark.shop/notes.html#on-call-runbook"}
+    ]
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #09090b;
+      color: #e4e4e7;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(9,9,11,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid #1f1f23;
+    }
+    nav .container {
+      max-width: 760px; margin: 0 auto; padding: 0 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      height: 64px;
+    }
+    nav .logo { font-weight: 700; font-size: 1.2rem; color: #fff; text-decoration: none; }
+    nav .logo span { color: #6366f1; }
+    nav a { color: #a1a1aa; text-decoration: none; font-size: 0.9rem; }
+    nav a:hover { color: #fff; }
+
+    .hero { padding-top: 120px; padding-bottom: 32px; }
+    .hero .breadcrumb { font-size: 0.8rem; color: #71717a; margin-bottom: 20px; }
+    .hero .breadcrumb a { color: #818cf8; text-decoration: none; }
+    .hero .breadcrumb a:hover { text-decoration: underline; }
+    .hero .tag {
+      display: inline-block; padding: 4px 14px; border-radius: 999px;
+      background: rgba(99,102,241,0.08); color: #818cf8;
+      font-size: 0.7rem; font-weight: 600; margin-bottom: 14px;
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+    .hero h1 {
+      font-size: 2.4rem; font-weight: 800; line-height: 1.15;
+      letter-spacing: -0.02em; margin-bottom: 14px;
+    }
+    .hero p.lede { color: #a1a1aa; font-size: 1.0rem; max-width: 640px; line-height: 1.7; }
+
+    .content { padding-bottom: 64px; }
+
+    .post {
+      padding: 32px 0;
+      border-top: 1px solid #1a1a1f;
+      scroll-margin-top: 88px;
+    }
+    .post:first-of-type { border-top: none; padding-top: 24px; }
+    .post:last-of-type { border-bottom: 1px solid #1a1a1f; }
+
+    .post .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; color: #71717a;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .post h2 {
+      font-size: 1.5rem; font-weight: 700; line-height: 1.2;
+      letter-spacing: -0.01em; margin-bottom: 14px;
+      color: #f4f4f5;
+    }
+    .post h3 {
+      font-size: 1.05rem; font-weight: 600; margin: 20px 0 8px;
+      color: #e4e4e7;
+    }
+    .post p {
+      color: #a1a1aa; font-size: 0.96rem; margin-bottom: 14px;
+      line-height: 1.7;
+    }
+    .post ul, .post ol {
+      color: #a1a1aa; font-size: 0.96rem; margin: 6px 0 18px 22px;
+      line-height: 1.75;
+    }
+    .post li { margin-bottom: 6px; }
+    .post strong { color: #e4e4e7; }
+    .post code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #0f0f13; border: 1px solid #1a1a1f;
+      padding: 1px 6px; border-radius: 3px;
+      font-size: 0.86em; color: #c7d2fe;
+    }
+    .post .pullquote {
+      border-left: 2px solid #6366f1;
+      padding: 4px 0 4px 16px;
+      margin: 18px 0;
+      color: #c7d2fe;
+      font-size: 1rem;
+    }
+
+    .content .btn {
+      display: inline-block; padding: 10px 22px; border-radius: 8px;
+      font-weight: 600; font-size: 0.88rem; text-decoration: none;
+      transition: all 0.2s; margin: 4px 6px 0 0;
+    }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-primary:hover { background: #4f46e5; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: #e4e4e7; border: 1px solid #27272a; }
+    .btn-outline:hover { border-color: #6366f1; color: #fff; }
+
+    footer {
+      border-top: 1px solid #1f1f23; padding: 32px 0;
+      text-align: center; color: #71717a; font-size: 0.85rem;
+    }
+    footer a { color: #818cf8; text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .post h2 { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/" class="logo">Edward<span>Clark</span></a>
+      <a href="/">Back to Portfolio</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a> / Notes</div>
+      <div class="tag">Writing</div>
+      <h1>Notes</h1>
+      <p class="lede">
+        Short writeups on problems I&rsquo;ve shipped, debugged, or learned from. Not essays &mdash; more like the kind of postmortem a teammate would actually read. Updated when I have something real to say.
+      </p>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container">
+
+      <article class="post" id="self-host-mail">
+        <div class="meta">2026-04-12 &middot; ~7 min read</div>
+        <h2>Why I self-host mail (and why you probably shouldn&rsquo;t)</h2>
+
+        <p>
+          I run Postfix + Dovecot at home. It&rsquo;s been running two years. I would not recommend it to anyone who values their weekend.
+        </p>
+
+        <p>
+          Three weekends was my original estimate. What it turned out to be:
+        </p>
+
+        <ul>
+          <li><strong>Weekend 1</strong>: install Postfix + Dovecot, set up IMAP, route local mail. Works. Everything works.</li>
+          <li><strong>Weekend 2</strong>: nothing works. Gmail marks everything as spam. DKIM keys not aligned. SPF record missing. Reverse DNS not pointing at my residential IP. One ISP support ticket to set PTR.</li>
+          <li><strong>Weekend 3</strong>: DMARC policy, ARC signature headers for the couple of auto-forwarders, TLS via Let&rsquo;s Encrypt, mail-tester.com iterate until the score stops being embarrassing.</li>
+        </ul>
+
+        <p>
+          The &ldquo;why you probably shouldn&rsquo;t&rdquo; part is not technical complexity. It&rsquo;s that email deliverability is governed by ad-hoc reputation scores maintained by inbox providers, and your residential IP can drift into &ldquo;looks like a botnet&rdquo; territory without warning. SES at AWS costs ~$0 for the volume most users generate, and the deliverability is someone else&rsquo;s problem.
+        </p>
+
+        <p>
+          I still self-host because I wanted muscle memory for SMTP. The muscle has paid off twice: once diagnosing why a client&rsquo;s transactional mail was landing in spam, once reading headers on a misrouted alert. Both would have taken a paid consultant if I hadn&rsquo;t done this first.
+        </p>
+
+        <div class="pullquote">A runbook is the cheapest documentation investment &mdash; 20 minutes to write, lifetime of saved time.</div>
+
+        <p>
+          Checklist I should have written first:
+        </p>
+        <ul>
+          <li>Static residential IP. Ask ISP for PTR record up front.</li>
+          <li>DKIM key pair + selector, publish in DNS, verify with mail-tester.com.</li>
+          <li>DMARC starting at <code>p=none</code>. Bump to <code>quarantine</code> after you see alignment in reports.</li>
+          <li>SPF one-per-type string, no more than 10 lookups.</li>
+          <li>ARC signer if you have any auto-forwarders (mailman, vacation responders).</li>
+          <li>TLS via Let&rsquo;s Encrypt with auto-renew &mdash; mine has not expired once.</li>
+          <li>If you have another primary inbox, set it up as &ldquo;send mail as,&rdquo; not forwarder. Forwarders break ARC.</li>
+        </ul>
+      </article>
+
+      <article class="post" id="lambda-cold-start">
+        <div class="meta">2026-05-22 &middot; ~5 min read</div>
+        <h2>Making contact-form Lambda feel snappy</h2>
+
+        <p>
+          The contact-form Lambda&rsquo;s latency histogram, before any tuning, was bimodal: median ~180ms (warm), p99 ~1800ms (cold). The shape is the giveaway. One cliff at the warm-start plateau, one at the cold-start spike.
+        </p>
+
+        <p>
+          What I changed, in order of how much each moved p99:
+        </p>
+
+        <h3>1. Bundle size</h3>
+        <p>
+          Removed <code>reportlab</code> (no longer used once resume.pdf generation moved server-side, kept the dependency accidentally). Audit found two other heavy deps that were imported but never called. Deploy artifact went from ~12 MB to ~3 MB. Cold start dropped from ~1800ms to ~1100ms.
+        </p>
+
+        <h3>2. Lazy imports</h3>
+        <p>
+          Top-of-module imports are a habit. Heavy libraries moved into the handler. Another ~150ms.
+        </p>
+
+        <h3>3. Provisioned concurrency</h3>
+        <p>
+          Set <code>reservedConcurrency=2</code> with one always-warm instance. Cold-start cliff disappears from the histogram entirely. Cost increase: ~$7/mo at low traffic. For my contact form (~2&ndash;4 messages/day, peaks during hiring season) it pencils out.
+        </p>
+
+        <div class="pullquote">Always more levers than there is time. I have not tried SnapStart. Should, eventually.</div>
+
+        <p>
+          What I have not done yet: SnapStart for harder cold-start workloads. Step Functions for multi-step warm-up. Warming multiple Lambda aliases on deploy.
+        </p>
+
+        <p>
+          Lesson, if there is one: <strong>measure the histogram, not the average</strong>. Average latency on this Lambda looked fine. The p99 was a recruiter refreshing a contact form and waiting two seconds before assuming something was broken.
+        </p>
+      </article>
+
+      <article class="post" id="on-call-runbook">
+        <div class="meta">2026-06-30 &middot; ~4 min read</div>
+        <h2>An on-call runbook I actually wrote</h2>
+
+        <p>
+          The gas-station POS goes down once every few months. The owner calls me, because I happen to be the person nearby who understands payment networks and Linux at the same time.
+        </p>
+
+        <p>
+          The first outage took 90 minutes and required a drive to the station. The fact that I had fixed it before did not help &mdash; different root cause, different fix.
+        </p>
+
+        <p>
+          So I wrote a runbook. Two pages, plain Markdown, indexed by symptom:
+        </p>
+
+        <ul>
+          <li><strong>&ldquo;Card reader won&rsquo;t connect&rdquo;</strong> &rarr; check WiFi AP / restart radio / power-cycle reader / verify static IP / SOS mode if all else fails.</li>
+          <li><strong>&ldquo;Payment processor slow&rdquo;</strong> &rarr; ping gateway / ISP speedtest / fall back to backup terminal / notify customers / queue for batch at end of shift.</li>
+          <li><strong>&ldquo;Receipt printer out of paper&rdquo;</strong> &rarr; refill. But FIRST check that what fell out isn&rsquo;t actually the cutter housing. It happens.</li>
+        </ul>
+
+        <p>
+          Each step lists a completion-time estimate and &ldquo;if this didn&rsquo;t work, try the next thing.&rdquo; Time-to-diagnose with runbook in hand: 4 minutes. Without: still 90.
+        </p>
+
+        <div class="pullquote">A runbook is for the person who forgot what they did. Or the person who has never seen this system before.</div>
+
+        <p>
+          The lesson I keep relearning: runbooks are not for the person who wrote them. They&rsquo;re for the person who will write them again in six months and forgot what they did. Or the person who has never seen this system before and has forty-five seconds to decide what to try next.
+        </p>
+
+        <p>
+          A runbook is the cheapest documentation investment a working engineer makes &mdash; twenty minutes to write, lifetime of saved time. The reason most teams don&rsquo;t have them is the same reason most teams have bad testing: writing the runbook is coding-adjacent work, and adjacent work is what gets cut first when the calendar gets tight.
+        </p>
+      </article>
+
+      <p style="margin-top: 48px;">
+        <a href="/" class="btn btn-primary">&larr; Back to Portfolio</a>
+        <a href="/resume.html" class="btn btn-outline">Resume</a>
+        <a href="/homelab.html" class="btn btn-outline">Homelab</a>
+      </p>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      Edward Clark &mdash; <a href="/">edwardclark.shop</a>
+    </div>
+  </footer>
+</body>
+</html>

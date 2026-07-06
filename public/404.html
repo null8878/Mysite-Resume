@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Page Not Found | Edward Clark</title>
+<meta name="description" content="The page you're looking for doesn't exist. Return to Edward Clark's portfolio.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07070a">
+<meta name="color-scheme" content="dark">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"404 \u2014 Not Found","url":"https://edwardclark.shop/404.html","description":"The requested page was not found on this serverless AWS deployment.","isPartOf":{"@type":"WebSite","name":"Edward Clark Portfolio","url":"https://edwardclark.shop"}}
+</script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#07070a;color:#e4e4e7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;overflow:hidden;position:relative}
+.bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.bg .gradient{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(99,102,241,0.1) 0%,transparent 60%)}
+.bg .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(31,31,35,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(31,31,35,0.4) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%)}
+.container{position:relative;max-width:560px;width:100%;text-align:center}
+.code{font-size:clamp(6rem,18vw,11rem);font-weight:900;line-height:1;margin-bottom:8px;background:linear-gradient(135deg,#e4e4e7,#818cf8 60%,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.05em}
+.label{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#71717a;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:24px}
+h1{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-0.02em;margin-bottom:14px}
+p{color:#a1a1aa;font-size:0.95rem;margin-bottom:28px;line-height:1.6}
+.path{display:inline-block;padding:6px 12px;background:#0f0f13;border:1px solid #1f1f23;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:#f87171;margin-bottom:28px;word-break:break-all}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;font-weight:600;font-size:0.875rem;text-decoration:none;transition:all 0.25s;border:none;cursor:pointer;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,0.35)}
+.btn-outline{background:transparent;color:#e4e4e7;border:1px solid #27272a}
+.btn-outline:hover{border-color:#6366f1;color:#818cf8}
+.hint{margin-top:32px;font-size:0.8rem;color:#52525b}
+.hint code{color:#71717a;padding:2px 6px;background:#0f0f13;border-radius:3px;font-size:0.75rem}
+@media(max-width:480px){.actions{flex-direction:column}.btn{width:100%;justify-content:center}}
+</style>
+</head>
+<body>
+<div class="bg">
+  <div class="gradient"></div>
+  <div class="grid"></div>
+</div>
+<div class="container">
+  <div class="code">404</div>
+  <div class="label">PAGE_NOT_FOUND</div>
+  <h1>This route doesn't exist.</h1>
+  <p>The page you're looking for either moved, was renamed, or never existed on this serverless AWS deployment.</p>
+  <div class="path" id="path">&nbsp;</div>
+  <div class="actions">
+    <a href="/" class="btn btn-primary">&larr; Back to Portfolio</a>
+    <a href="https://github.com/null8878" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
+    <a href="mailto:contact@edwardclark.shop" class="btn btn-outline">Email Me</a>
+  </div>
+  <div class="hint">Use the buttons below or hit the back button in your browser.</div>
+</div>
+<script>
+document.getElementById('path').textContent = window.location.pathname;
+</script>
+</body>
+</html>

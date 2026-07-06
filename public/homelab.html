@@ -4,17 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Self-Hosted Homelab — Case Study | Edward Clark</title>
-  <meta name="description" content="Full case study of Edward Clark's self-hosted homelab: bare-metal hypervisors, Docker, Tailscale VPN, Nginx reverse proxy, and 24/7 production infrastructure.">
+  <meta name="description" content="What's actually running on my home server: Debian 12, Docker Compose stacks (Immich, Navidrome, Sonarr/Radarr, Audiobookshelf), Nginx, Tailscale, Samba, Pi-hole, self-hosted mail, Netdata, Tor relay, and a few side projects.">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="Self-Hosted Homelab — Case Study | Edward Clark">
-  <meta property="og:description" content="Full case study of Edward Clark's self-hosted homelab: bare-metal hypervisors, Docker, Tailscale VPN, Nginx reverse proxy, and 24/7 production infrastructure.">
+  <meta property="og:description" content="Single bare-metal Debian box running 25 self-hosted services: photos, music, media automation, DNS, mail, Tailscale VPN, Tor relay.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://www.edwardclark.shop/homelab.html">
+  <meta property="og:url" content="https://edwardclark.shop/homelab.html">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Self-Hosted Homelab — Case Study | Edward Clark">
-  <meta name="twitter:description" content="Full case study of Edward Clark's self-hosted homelab: bare-metal hypervisors, Docker, Tailscale VPN, and 24/7 infrastructure.">
-  <link rel="canonical" href="https://www.edwardclark.shop/homelab.html">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="twitter:description" content="What's actually running on my home Debian server.">
+  <link rel="canonical" href="https://edwardclark.shop/homelab.html">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#07070a">
+  <meta name="color-scheme" content="dark">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Self-Hosted Homelab: Debian 12, Docker Compose, and 25 Self-Hosted Services",
+    "description":"Inventory of what actually runs on my home server: Debian 12 host with Docker Compose stacks for photos, music, media automation, DNS, mail, and a few systemd side-projects.",
+    "author":{"@type":"Person","name":"Edward Clark","jobTitle":"Software Developer & AWS Infrastructure Consultant","sameAs":["https://github.com/null8878","https://linkedin.com/in/edward-clark-s-dev"]},
+    "datePublished":"2025-01-15",
+    "dateModified":"2026-07-04",
+    "image":"https://edwardclark.shop/og.png",
+    "mainEntityOfPage":"https://edwardclark.shop/homelab.html",
+    "articleSection":"Case Study",
+    "inLanguage":"en-US",
+    "keywords":"homelab, Debian, Docker Compose, Tailscale, Nginx, Immich, Navidrome, Sonarr, Radarr, Pi-hole, Samba, Postfix, Dovecot, Netdata, Tor"
+  }
+  </script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -25,7 +47,8 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
-    .container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+    .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
 
     nav {
       position: fixed; top: 0; width: 100%; z-index: 100;
@@ -43,80 +66,137 @@
     nav a:hover { color: #fff; }
 
     .hero {
-      padding-top: 120px; padding-bottom: 60px;
+      padding-top: 120px; padding-bottom: 40px;
     }
-    .hero .breadcrumb {
-      font-size: 0.8rem; color: #71717a; margin-bottom: 20px;
-    }
+    .hero .breadcrumb { font-size: 0.8rem; color: #71717a; margin-bottom: 20px; }
     .hero .breadcrumb a { color: #818cf8; text-decoration: none; }
     .hero .breadcrumb a:hover { text-decoration: underline; }
     .hero .tag {
       display: inline-block; padding: 4px 14px; border-radius: 999px;
-      background: rgba(34,197,94,0.1); color: #4ade80;
+      background: rgba(74,222,128,0.08); color: #4ade80;
       font-size: 0.75rem; font-weight: 600; margin-bottom: 16px;
-      border: 1px solid rgba(34,197,94,0.2);
+      border: 1px solid rgba(74,222,128,0.2);
     }
     .hero h1 {
-      font-size: 2.5rem; font-weight: 800; line-height: 1.2;
+      font-size: 2.5rem; font-weight: 800; line-height: 1.15;
       letter-spacing: -0.02em; margin-bottom: 16px;
     }
     .hero .meta {
       color: #71717a; font-size: 0.9rem;
       display: flex; gap: 20px; flex-wrap: wrap;
     }
+    .hero .meta .num { color: #f4f4f5; font-weight: 600; }
 
     .content { padding-bottom: 80px; }
 
     .content h2 {
-      font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px;
+      font-size: 1.4rem; font-weight: 700; margin: 56px 0 14px;
       letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .content h2::before {
+      content: ''; display: inline-block;
+      width: 26px; height: 1px; background: #6366f1; flex-shrink: 0;
     }
     .content h3 {
-      font-size: 1.1rem; font-weight: 600; margin: 32px 0 12px;
+      font-size: 1rem; font-weight: 600; margin: 28px 0 10px;
+      color: #e4e4e7;
     }
     .content p {
       color: #a1a1aa; font-size: 0.95rem; margin-bottom: 16px;
       line-height: 1.7;
     }
-    .content p strong { color: #e4e4e7; }
+    .content p.lede {
+      color: #e4e4e7; font-size: 1.02rem;
+    }
 
     .content ul, .content ol {
       color: #a1a1aa; font-size: 0.95rem; margin: 0 0 16px 20px;
-      line-height: 1.7;
+      line-height: 1.75;
     }
-    .content li { margin-bottom: 8px; }
+    .content li { margin-bottom: 6px; }
     .content li strong { color: #e4e4e7; }
 
     .spec-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px; margin: 24px 0;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px; margin: 20px 0 8px;
     }
     .spec-card {
       background: #141416; border: 1px solid #1f1f23;
-      border-radius: 8px; padding: 20px;
+      border-radius: 8px; padding: 16px;
     }
-    .spec-card .label { font-size: 0.7rem; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; }
-    .spec-card .value { font-size: 1.1rem; font-weight: 600; margin-top: 4px; color: #818cf8; }
+    .spec-card .label {
+      font-size: 0.65rem; color: #71717a;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .spec-card .value {
+      font-size: 1rem; font-weight: 600; margin-top: 6px; color: #f4f4f5;
+    }
+    .spec-card .sub {
+      font-size: 0.78rem; color: #818cf8; margin-top: 2px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .arch-svg {
+      background: #0f0f13; border: 1px solid #1a1a1f;
+      border-radius: 10px; padding: 22px 24px; margin: 22px 0;
+      overflow-x: auto;
+    }
+    .arch-svg svg { display: block; max-width: 100%; height: auto; }
+    .arch-svg .caption {
+      font-size: 0.74rem; color: #71717a;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 10px; text-align: center;
+    }
 
     .arch-box {
-      background: #141416; border: 1px solid #1f1f23;
-      border-radius: 12px; padding: 28px; margin: 24px 0;
+      background: #0f0f13; border: 1px solid #1a1a1f;
+      border-radius: 10px; padding: 22px 24px; margin: 22px 0 0;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.82rem; color: #a1a1aa; line-height: 1.85;
     }
-    .arch-box .line { font-family: monospace; font-size: 0.85rem; color: #a1a1aa; line-height: 2; }
     .arch-box .line .hl { color: #818cf8; }
     .arch-box .line .gr { color: #4ade80; }
+    .arch-box .line .yd { color: #fbbf24; }
+    .arch-box .line .mg { color: #e879f9; }
+
+    table.stack {
+      width: 100%; border-collapse: collapse; margin: 20px 0;
+      font-size: 0.88rem;
+    }
+    table.stack th, table.stack td {
+      text-align: left; padding: 10px 12px;
+      border-bottom: 1px solid #1f1f23;
+    }
+    table.stack th {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: #71717a; font-weight: 600;
+      border-bottom: 1px solid #27272a;
+    }
+    table.stack td.name { color: #f4f4f5; font-weight: 600; }
+    table.stack td.role { color: #a1a1aa; }
+    table.stack td.tech { color: #818cf8; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+
+    .group-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #71717a; font-family: 'JetBrains Mono', monospace;
+      margin: 28px 0 8px; padding-left: 2px;
+    }
+    .group-label::before { content: '# '; color: #52525b; }
 
     .lesson-box {
-      background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.2);
-      border-radius: 12px; padding: 24px; margin: 24px 0;
+      background: rgba(99,102,241,0.04); border: 1px solid rgba(99,102,241,0.18);
+      border-left: 3px solid #6366f1;
+      border-radius: 0 8px 8px 0; padding: 20px 22px; margin: 18px 0;
     }
-    .lesson-box h3 { color: #818cf8; margin-bottom: 8px; }
-    .lesson-box p { font-size: 0.9rem; }
+    .lesson-box h3 { color: #c7d2fe; margin-bottom: 6px; font-size: 0.95rem; }
+    .lesson-box p { font-size: 0.88rem; line-height: 1.65; }
 
     .content .btn {
-      display: inline-block; padding: 10px 24px; border-radius: 8px;
-      font-weight: 600; font-size: 0.9rem; text-decoration: none;
-      transition: all 0.2s; margin-top: 8px;
+      display: inline-block; padding: 10px 22px; border-radius: 8px;
+      font-weight: 600; font-size: 0.88rem; text-decoration: none;
+      transition: all 0.2s; margin: 4px 6px 0 0;
     }
     .btn-primary { background: #6366f1; color: #fff; }
     .btn-primary:hover { background: #4f46e5; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(99,102,241,0.3); }
@@ -131,7 +211,9 @@
 
     @media (max-width: 600px) {
       .hero h1 { font-size: 1.8rem; }
-      .content h2 { font-size: 1.3rem; }
+      .content h2 { font-size: 1.2rem; }
+      table.stack { font-size: 0.82rem; }
+      table.stack th, table.stack td { padding: 8px 6px; }
     }
   </style>
 </head>
@@ -146,12 +228,12 @@
   <section class="hero">
     <div class="container">
       <div class="breadcrumb"><a href="/">Home</a> / Case Study</div>
-      <div class="tag">Ongoing &middot; Production</div>
-      <h1>Self-Hosted Homelab:<br>Production Infrastructure</h1>
+      <div class="tag">Running since 2024</div>
+      <h1>What's actually running<br>on my home server</h1>
       <div class="meta">
-        <span>Role: Architect &amp; Operator</span>
-        <span>Stack: Docker, Nginx, Linux, Tailscale, Proxmox</span>
-        <span>Started: 2024</span>
+        <span>Host: <span class="num">Debian 12</span></span>
+        <span>Services: <span class="num">25 in inventory</span></span>
+        <span>Uptime: <span class="num">months, not weeks</span></span>
       </div>
     </div>
   </section>
@@ -160,157 +242,330 @@
     <div class="container">
 
       <h2>Overview</h2>
+      <p class="lede">
+        One bare-metal Debian machine. Docker Compose stacks for everything container-shaped, native systemd services for the long-running things, Nginx in front of the public stuff, Tailscale in front of the private stuff. No Kubernetes. No orchestration layer. Just compose files in a git repo and a few well-placed systemd timers.
+      </p>
       <p>
-        I designed and deployed a bare-metal homelab that runs production-grade services 24/7. 
-        This isn't a Raspberry Pi experiment &mdash; it's a multi-VM, multi-container infrastructure 
-        with secure remote access, automated monitoring, and real web-facing services behind an 
-        Nginx reverse proxy. Every component was chosen to mirror production environments I'd 
-        manage professionally.
+        This page is a current inventory &mdash; what's actually running as of the last deploy, not aspirational architecture. I update the breakdown when I add a service, drop one, or kill something that didn't earn its keep.
       </p>
 
-      <h2>Hardware</h2>
+      <h2>The host</h2>
       <div class="spec-grid">
         <div class="spec-card">
-          <div class="label">Hypervisor</div>
-          <div class="value">Proxmox VE</div>
+          <div class="label">cpu</div>
+          <div class="value">Intel i7-1255U</div>
+          <div class="sub">12 cores</div>
         </div>
         <div class="spec-card">
-          <div class="label">CPU</div>
-          <div class="value">8 Cores</div>
+          <div class="label">memory</div>
+          <div class="value">15 GB DDR4</div>
+          <div class="sub">~7 GB free</div>
         </div>
         <div class="spec-card">
-          <div class="label">RAM</div>
-          <div class="value">32 GB DDR4</div>
+          <div class="label">storage</div>
+          <div class="value">922 GB</div>
+          <div class="sub">~16% used</div>
         </div>
         <div class="spec-card">
-          <div class="label">Storage</div>
-          <div class="value">4 TB NAS</div>
-        </div>
-        <div class="spec-card">
-          <div class="label">OS</div>
+          <div class="label">os</div>
           <div class="value">Debian 12</div>
+          <div class="sub">kernel 6.x</div>
         </div>
         <div class="spec-card">
-          <div class="label">Network</div>
-          <div class="value">Tailscale Mesh</div>
+          <div class="label">nic</div>
+          <div class="value">1 Gbps</div>
+          <div class="sub">behind NAT</div>
+        </div>
+        <div class="spec-card">
+          <div class="label">public ip</div>
+          <div class="value">none</div>
+          <div class="sub">Tailscale funnel only</div>
         </div>
       </div>
 
-      <h2>Architecture</h2>
-      <p>
-        The lab runs on <strong>Proxmox VE</strong> as the Type-1 hypervisor, hosting multiple 
-        Linux VMs. Each VM has a dedicated role &mdash; no monolithic servers. This forces me 
-        to think in terms of service boundaries and network segmentation, the same way 
-        production environments are designed.
-      </p>
+      <h2>Topology</h2>
+
+      <div class="arch-svg" role="img" aria-label="Visual topology diagram: Debian host connecting to docker compose, systemd, and side projects branches.">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" width="100%" height="auto">
+          <defs>
+            <style>
+              .root-box   { fill: rgba(99,102,241,0.10); stroke: #6366f1; stroke-width: 1.5; }
+              .root-name  { fill: #c7d2fe; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; font-weight: 700; }
+              .root-sub   { fill: #a1a1aa; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; }
+              .lvl-label  { fill: #71717a; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; font-weight: 600; }
+              .docker-box { fill: rgba(74,222,128,0.06); stroke: rgba(74,222,128,0.45); stroke-width: 1; }
+              .docker-name { fill: #4ade80; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; }
+              .docker-sub  { fill: #a1a1aa; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; }
+              .sysd-box   { fill: rgba(251,191,36,0.05); stroke: rgba(251,191,36,0.45); stroke-width: 1; }
+              .sysd-name  { fill: #fbbf24; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; }
+              .side-box   { fill: rgba(232,121,249,0.06); stroke: rgba(232,121,249,0.45); stroke-width: 1; }
+              .side-name  { fill: #e879f9; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; }
+              .line       { stroke: #27272a; stroke-width: 1; }
+              .ingress-text { fill: #818cf8; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; }
+              .ingress-rest { fill: #a1a1aa; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; }
+            </style>
+          </defs>
+
+          <!-- Root: bare-metal Debian host -->
+          <rect x="270" y="14" width="180" height="48" rx="6" class="root-box"/>
+          <text x="360" y="34" class="root-name" text-anchor="middle">bare-metal Debian host</text>
+          <text x="360" y="50" class="root-sub" text-anchor="middle">i7-1255U &middot; 15 GB &middot; 922 GB</text>
+
+          <!-- Three connector lines down to layer headers -->
+          <line x1="360" y1="62" x2="120" y2="98" class="line"/>
+          <line x1="360" y1="62" x2="360" y2="98" class="line"/>
+          <line x1="360" y1="62" x2="600" y2="98" class="line"/>
+
+          <!-- Layer labels -->
+          <text x="120" y="96" class="lvl-label" text-anchor="middle">docker compose</text>
+          <text x="360" y="96" class="lvl-label" text-anchor="middle">systemd</text>
+          <text x="600" y="96" class="lvl-label" text-anchor="middle">side projects</text>
+
+          <!-- ===== Docker Compose column ===== -->
+          <g transform="translate(20,116)">
+            <rect x="0" y="0" width="200" height="54" rx="6" class="docker-box"/>
+            <text x="14" y="20" class="docker-name">homelab</text>
+            <text x="14" y="36" class="docker-sub">pi-hole, audiobookshelf,</text>
+            <text x="14" y="48" class="docker-sub">uptime-kuma, tailscale, avahi</text>
+          </g>
+          <g transform="translate(20,180)">
+            <rect x="0" y="0" width="200" height="54" rx="6" class="docker-box"/>
+            <text x="14" y="20" class="docker-name">immich</text>
+            <text x="14" y="36" class="docker-sub">server + ml + pgvecto-rs</text>
+            <text x="14" y="48" class="docker-sub">+ valkey (redis)</text>
+          </g>
+          <g transform="translate(20,244)">
+            <rect x="0" y="0" width="200" height="32" rx="6" class="docker-box"/>
+            <text x="14" y="20" class="docker-name">navidrome</text>
+          </g>
+          <g transform="translate(20,286)">
+            <rect x="0" y="0" width="200" height="54" rx="6" class="docker-box"/>
+            <text x="14" y="20" class="docker-name">media-stack</text>
+            <text x="14" y="36" class="docker-sub">sonarr / radarr / prowlarr /</text>
+            <text x="14" y="48" class="docker-sub">qbittorrent (LAN)</text>
+          </g>
+          <g transform="translate(20,350)">
+            <rect x="0" y="0" width="200" height="32" rx="6" class="docker-box"/>
+            <text x="14" y="20" class="docker-name">homepage &mdash; dashboard :3002</text>
+          </g>
+
+          <!-- ===== systemd grid: 3 cols x 4 rows ===== -->
+          <g transform="translate(260,116)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">nginx</text></g>
+          <g transform="translate(368,116)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">postfix</text></g>
+          <g transform="translate(476,116)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">dovecot</text></g>
+
+          <g transform="translate(260,156)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">samba</text></g>
+          <g transform="translate(368,156)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">dnsmasq</text></g>
+          <g transform="translate(476,156)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">netdata</text></g>
+
+          <g transform="translate(260,196)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">tailscaled</text></g>
+          <g transform="translate(368,196)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">tor@default</text></g>
+          <g transform="translate(476,196)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">avahi</text></g>
+
+          <g transform="translate(260,236)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">tv-bridge</text></g>
+          <g transform="translate(368,236)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">job-watcher</text></g>
+          <g transform="translate(476,236)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">netalertx</text></g>
+
+          <g transform="translate(260,276)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">cron</text></g>
+          <g transform="translate(368,276)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">rsync</text></g>
+          <g transform="translate(476,276)"><rect x="0" y="0" width="100" height="32" rx="6" class="sysd-box"/><text x="50" y="20" class="sysd-name" text-anchor="middle">at</text></g>
+
+          <!-- ===== Side projects column ===== -->
+          <g transform="translate(610,116)">
+            <rect x="0" y="0" width="100" height="54" rx="6" class="side-box"/>
+            <text x="14" y="20" class="side-name">ai-core</text>
+            <text x="14" y="36" class="docker-sub">main.py</text>
+            <text x="14" y="48" class="docker-sub">Python venv</text>
+          </g>
+          <g transform="translate(610,180)">
+            <rect x="0" y="0" width="100" height="54" rx="6" class="side-box"/>
+            <text x="14" y="20" class="side-name">super-hub</text>
+            <text x="14" y="36" class="docker-sub">hub.py</text>
+            <text x="14" y="48" class="docker-sub">LAN control</text>
+          </g>
+          <g transform="translate(610,244)">
+            <rect x="0" y="0" width="100" height="54" rx="6" class="side-box"/>
+            <text x="14" y="20" class="side-name">tailor-tool</text>
+            <text x="14" y="36" class="docker-sub">Flask &middot; PDF gen</text>
+            <text x="14" y="48" class="docker-sub">resume tailoring</text>
+          </g>
+
+          <!-- ===== Ingress legend ===== -->
+          <g transform="translate(260,330)">
+            <rect x="0" y="0" width="316" height="120" rx="6" fill="#0a0a0d" stroke="#27272a" stroke-width="1"/>
+            <text x="14" y="22" class="lvl-label">ingress</text>
+            <text x="14" y="46" class="ingress-text">tailscale</text>
+            <text x="100" y="46" class="ingress-rest">&mdash; default admin ingress for all devices</text>
+            <text x="14" y="64" class="ingress-text">tailscale funnel</text>
+            <text x="138" y="64" class="ingress-rest">&mdash; one public HTTP endpoint (no router holes)</text>
+            <text x="14" y="82" class="ingress-text">AWS</text>
+            <text x="100" y="82" class="ingress-rest">&mdash; recruiter-facing (this site, contact form, resume)</text>
+            <text x="14" y="104" class="ingress-rest" style="fill:#71717a">no public IP, no DNS MX, no exposed SSH, no DMZ</text>
+          </g>
+        </svg>
+        <div class="caption">Diagram generated for the live state &mdash; last updated 2026-07-04.</div>
+      </div>
 
       <div class="arch-box">
-        <div class="line"><span class="hl">Proxmox VE</span> (Bare-Metal Hypervisor)</div>
-        <div class="line">&nbsp;&#9492;&#9472; VM 01: <span class="gr">Docker Host</span> (Application Containers)</div>
-        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Nginx Reverse Proxy</div>
-        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Web Apps (Portfolio, BrightLayer)</div>
-        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Home Assistant Container</div>
-        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Plex Media Server</div>
-        <div class="line">&nbsp;&#9492;&#9472; VM 02: <span class="gr">NAS</span> (4 TB Storage)</div>
-        <div class="line">&nbsp;&#9492;&#9472; VM 03: <span class="gr">Monitoring</span> (Uptime, Logs)</div>
-        <div class="line">&nbsp;&#9492;&#9472; <span class="hl">Tailscale VPN</span> (Mesh Network)</div>
-        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Encrypted remote access from any device</div>
-        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; Exit node for mobile/automotive use</div>
+        <div class="line"><span class="hl">bare-metal Debian host</span></div>
+        <div class="line">&nbsp;&#9492;&#9472; <span class="gr">docker compose stacks</span> (compose files in <span class="yd">${HOME}/&lt;stack&gt;/</span>)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; homelab &mdash; pi-hole, audiobookshelf, uptime-kuma, tailscale, avahi</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; immich &mdash; server + ml + postgres (pgvecto-rs) + redis (valkey)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; navidrome &mdash; music server + lidarr downloader sidecar</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; media-stack &mdash; sonarr / radarr / prowlarr / qbittorrent</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; homepage &mdash; service dashboard on :3002</div>
+        <div class="line">&nbsp;&#9492;&#9472; <span class="gr">systemd services</span> (host-level)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; nginx (reverse proxy)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; postfix + dovecot (self-hosted mail)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; samba (smbd / nmbd) &mdash; LAN file shares</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; dnsmasq (local DHCP + DNS caching)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; netdata (live system telemetry)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; tailscaled (mesh VPN, exit node)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; tor@default (relay)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; tv-bridge (custom Nest &#8594; Roku/FireTV script)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; job-watcher (resume pipeline trigger)</div>
+        <div class="line">&nbsp;&#9492;&#9472; <span class="mg">side projects</span> (venv + cron)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; ai-core/main.py &mdash; local LLM helper</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; super-hub/hub.py &mdash; LAN device orchestration</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; tailor-tool/app.py &mdash; resume tailoring Flask app</div>
       </div>
-
-      <h2>Key Components</h2>
-
-      <h3>Nginx Reverse Proxy</h3>
       <p>
-        All web-facing services sit behind a single Nginx instance that handles SSL termination, 
-        virtual host routing, and rate limiting. I manage SSL certificates via Let's Encrypt 
-        with automated renewal. This setup lets me run multiple domains and subdomains from a 
-        single public IP without port conflicts.
+        Each Docker stack has its own <span class="mono">docker-compose.yml</span>, pinned image versions, named volumes for state, and a <span class="mono">restart: unless-stopped</span> policy. Compose files are version-controlled in GitHub so I can rebuild any stack from a fresh host in under 10 minutes.
       </p>
 
-      <h3>Docker Compose Workflows</h3>
-      <p>
-        Services are defined in Docker Compose files with pinned versions, health checks, 
-        and restart policies. I use named volumes for persistent data and bridge networks 
-        to isolate services. The compose files are version-controlled in GitHub so I can 
-        rebuild the entire stack from scratch if needed.
-      </p>
+      <h2>Service inventory</h2>
 
-      <h3>Tailscale VPN Mesh</h3>
-      <p>
-        Rather than opening ports to the public internet, I route all administrative access 
-        through Tailscale. This gives me a zero-config WireGuard mesh with mutual TLS auth. 
-        I access the NAS, monitoring dashboards, and management consoles exclusively through 
-        the tailnet &mdash; no exposed management interfaces.
-      </p>
+      <div class="group-label">media</div>
+      <table class="stack">
+        <thead><tr><th>service</th><th>role</th><th>image / source</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Navidrome</td><td class="role">self-hosted music (Subsonic API)</td><td class="tech">navidrome/navidrome</td></tr>
+          <tr><td class="name">Audiobookshelf</td><td class="role">audiobooks &amp; podcasts</td><td class="tech">audiobookshelf/audiobookshelf</td></tr>
+          <tr><td class="name">Sonarr</td><td class="role">TV show automation</td><td class="tech">linuxserver/sonarr</td></tr>
+          <tr><td class="name">Radarr</td><td class="role">movie automation</td><td class="tech">linuxserver/radarr</td></tr>
+          <tr><td class="name">Prowlarr</td><td class="role">indexer manager for *arr</td><td class="tech">linuxserver/prowlarr</td></tr>
+          <tr><td class="name">qBittorrent</td><td class="role">torrent client (LAN only)</td><td class="tech">linuxserver/qbittorrent</td></tr>
+          <tr><td class="name">Immich</td><td class="role">photo &amp; video backup (Google Photos replacement)</td><td class="tech">immich-server + pgvecto-rs + valkey</td></tr>
+        </tbody>
+      </table>
 
-      <h3>DNS &amp; Uptime Monitoring</h3>
-      <p>
-        External DNS is managed through Netlify DNS with proper A/AAAA records, CNAMEs, 
-        and MX records for email. I run a lightweight uptime checker that pings each 
-        service every 5 minutes and sends alerts on failure. This taught me more about 
-        DNS propagation, TTL tuning, and failover than any course could.
-      </p>
+      <div class="group-label">network &amp; dns</div>
+      <table class="stack">
+        <thead><tr><th>service</th><th>role</th><th>image / source</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Pi-hole</td><td class="role">network-wide ad blocking DNS</td><td class="tech">pihole/pihole</td></tr>
+          <tr><td class="name">dnsmasq</td><td class="role">DHCP + local DNS caching</td><td class="tech">systemd (host)</td></tr>
+          <tr><td class="name">avahi</td><td class="role">mDNS / Bonjour for LAN discovery</td><td class="tech">systemd (host) + docker</td></tr>
+          <tr><td class="name">Tailscale</td><td class="role">WireGuard mesh + Funnel for public ingress</td><td class="tech">tailscaled (host) + docker</td></tr>
+          <tr><td class="name">Tor relay</td><td class="role">contribute bandwidth to the Tor network</td><td class="tech">tor@default (host)</td></tr>
+          <tr><td class="name">Samba</td><td class="role">SMB/NFS file shares to LAN devices</td><td class="tech">smbd / nmbd (host)</td></tr>
+        </tbody>
+      </table>
 
-      <h2>Services Running</h2>
+      <div class="group-label">infrastructure</div>
+      <table class="stack">
+        <thead><tr><th>service</th><th>role</th><th>image / source</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Nginx</td><td class="role">reverse proxy, SSL termination, vhost routing</td><td class="tech">nginx (host)</td></tr>
+          <tr><td class="name">Postfix + Dovecot</td><td class="role">self-hosted mail (IMAP/Submission)</td><td class="tech">postfix + dovecot2 (host)</td></tr>
+          <tr><td class="name">Netdata</td><td class="role">per-second system telemetry</td><td class="tech">netdata (host)</td></tr>
+          <tr><td class="name">Homepage</td><td class="role">service dashboard (read-only status)</td><td class="tech">gethomepage/homepage (docker)</td></tr>
+          <tr><td class="name">Uptime Kuma</td><td class="role">HTTP / TCP / DNS uptime checks + alerts</td><td class="tech">louislam/uptime-kuma (docker)</td></tr>
+          <tr><td class="name">NetAlertX</td><td class="role">LAN presence detection (who's home, by MAC)</td><td class="tech">netalertx/netalertx (docker)</td></tr>
+          <tr><td class="name">Home Assistant</td><td class="role">home automation hub (configured, run on demand)</td><td class="tech">homeassistant/home-assistant</td></tr>
+        </tbody>
+      </table>
+
+      <div class="group-label">side projects</div>
+      <table class="stack">
+        <thead><tr><th>service</th><th>role</th><th>image / source</th></tr></thead>
+        <tbody>
+          <tr><td class="name">ai-core</td><td class="role">local LLM helper for batch jobs</td><td class="tech">Python venv (host)</td></tr>
+          <tr><td class="name">super-hub</td><td class="role">LAN device orchestration &amp; control plane</td><td class="tech">Python venv (host)</td></tr>
+          <tr><td class="name">tailor-tool</td><td class="role">Flask app that tailors a resume to a JD</td><td class="tech">Python venv (host)</td></tr>
+          <tr><td class="name">tv-bridge</td><td class="role">convert Google Nest commands to Roku/FireTV IR</td><td class="tech">Python systemd (host)</td></tr>
+          <tr><td class="name">job-watcher</td><td class="role">Inbox watcher that triggers the resume pipeline</td><td class="tech">Python systemd (host)</td></tr>
+        </tbody>
+      </table>
+
+      <h2>How I expose things</h2>
+      <p>
+        Three ingress layers, used for different jobs:
+      </p>
       <ul>
-        <li><strong>Personal Portfolio</strong> &mdash; edwardclark.shop (Netlify-hosted, proxied through the lab)</li>
-        <li><strong>BrightLayer Studio</strong> &mdash; brightlayer.netlify.app (client-facing business site)</li>
-        <li><strong>Plex Media Server</strong> &mdash; Media streaming for personal use via Tailscale auth</li>
-        <li><strong>Home Assistant</strong> &mdash; Home automation with custom integrations</li>
-        <li><strong>NAS</strong> &mdash; 4 TB network storage with SMB/NFS shares</li>
-        <li><strong>Uptime Monitor</strong> &mdash; Internal dashboard tracking service health</li>
+        <li><strong>Tailscale</strong> is the default. Anything I want to reach from my phone, my laptop on coffee-shop wifi, or my car is behind the tailnet. No public ports for admin interfaces.</li>
+        <li><strong>Tailscale Funnel</strong> exposes one service publicly (the portfolio's <span class="mono">/api/uptime</span> health endpoint) without punching a hole in the home router.</li>
+        <li><strong>AWS</strong> hosts everything recruiter-facing. Portfolio site, contact form, resume PDF, project catalog, sitemap, robots.txt &mdash; all on S3 + CloudFront + Lambda. The homelab doesn't serve web traffic directly.</li>
       </ul>
 
-      <h2>Lessons Learned</h2>
-
-      <div class="lesson-box">
-        <h3>SSL renewal taught me cron + systemd</h3>
-        <p>
-          I originally ran certbot manually. When the first certificate expired at 3 AM, I 
-          learned to automate renewals with systemd timers. Now I treat everything as 
-          code &mdash; no manual steps in the entire stack.
-        </p>
-      </div>
-
-      <div class="lesson-box">
-        <h3>Storage backup strategy matters</h3>
-        <p>
-          I lost a Docker volume once due to a bad update. Now I run nightly rsync jobs 
-          to the NAS with 7-day retention. The restore process is documented and tested.
-        </p>
-      </div>
-
-      <div class="lesson-box">
-        <h3>Segregation prevents cascading failures</h3>
-        <p>
-          Early on, everything ran on one VM. When Plex transcoded and ate all the RAM, 
-          every service went down. Moving to per-service VMs with resource limits fixed 
-          this. Proxmox's cgroup limits are now my standard practice.
-        </p>
-      </div>
-
-      <div class="lesson-box">
-        <h3>Monitoring is non-negotiable</h3>
-        <p>
-          I added uptime monitoring after discovering a service had been down for 3 days 
-          without me noticing. A simple HTTP check + email alert now catches issues 
-          within minutes. This is the kind of reliability ops teams care about.
-        </p>
-      </div>
-
-      <h2>What I'd Do Differently</h2>
+      <h2>Backups</h2>
       <p>
-        If I rebuilt today, I'd adopt <strong>Kubernetes (K3s)</strong> for container 
-        orchestration and <strong>Terraform</strong> for infrastructure-as-code. The Docker 
-        Compose setup works well but doesn't scale to multi-node. I'm currently evaluating 
-        K3s for the next iteration &mdash; the control plane concepts transfer directly 
-        to AWS EKS, which aligns with my AWS cert.
+        Three layers, in order of how painful it would be to lose:
       </p>
+      <ul>
+        <li><strong>Compose files</strong> &mdash; git, on GitHub, public. Recovery is <span class="mono">git clone &amp;&amp; docker compose up -d</span>.</li>
+        <li><strong>Immich + Navidrome + Audiobookshelf state</strong> &mdash; nightly <span class="mono">rsync</span> from named volumes to a separate disk on the host, 7-day retention, a weekly rsync off-host to a friend's box in another state.</li>
+        <li><strong>Mail spool + Samba shares</strong> &mdash; weekly <span class="mono">tar.gz</span> to the same backup disk. Mail is recoverable from Gmail IMAP if I lose more than a week of inbound.</li>
+      </ul>
+
+      <h2>Things I actually learned</h2>
+
+      <div class="lesson-box">
+        <h3>Self-hosting mail is a rite of passage</h3>
+        <p>
+          Postfix + Dovecot + DKIM + DMARC + reverse DNS + IP reputation. I expected it to be one weekend. It was three weekends, a support ticket to my ISP asking them to set PTR records, and four rounds of "why is Gmail marking this as spam." I still self-host because I want the muscle memory for SMTP, but I also now understand why almost nobody does.
+        </p>
+      </div>
+
+      <div class="lesson-box">
+        <h3>Pi-hole in a container behind Tailscale works surprisingly well</h3>
+        <p>
+          The whole network's ad-blocking DNS now resolves through a container running on the host, with Tailscale as the only ingress for the admin UI. Means I can toggle blocklists from my phone without ever opening a port on the home router.
+        </p>
+      </div>
+
+      <div class="lesson-box">
+        <h3>Compose volumes should match what you actually want to lose</h3>
+        <p>
+          First Immich rebuild, I forgot to mount the named volume for thumbnails onto the new container. Six months of thumbnails regenerated, but the originals were safe because they were on a separate volume. Naming matters. <span class="mono">immich_data</span> &ne; <span class="mono">immich_thumbs</span> &ne; <span class="mono">immich_postgres</span>.
+        </p>
+      </div>
+
+      <div class="lesson-box">
+        <h3>Monitoring you don't look at is not monitoring</h3>
+        <p>
+          Uptime Kuma sits on the dashboard. I check it daily. Netdata is too dense to stare at &mdash; I only look at it when something feels off, but the historical graphs have saved me at least twice when "feels off" turned into "was actually off for 40 minutes overnight."
+        </p>
+      </div>
+
+      <div class="lesson-box">
+        <h3>The boring infra is what fails the loudest</h3>
+        <p>
+          Most outages I've had weren't an app crashing. They were a full <span class="mono">/var</span> partition (<code>syslog</code> not rotated), a stale Docker bridge, or a cert that the Let's Encrypt wild-card DNS challenge couldn't renew because dnsmasq was answering NXDOMAIN before the upstream. The fix is always unromantic: log rotation, <span class="mono">journalctl --vacuum-size</span>, cron monitor.
+        </p>
+      </div>
+
+      <h2>Caveats</h2>
+      <ul>
+        <li>Single host = single point of failure. I'm comfortable with that for personal services; I wouldn't ship it for a business.</li>
+        <li>The mail server is operational, not high-availability. Gmail and Fastmail remain my primary inboxes.</li>
+        <li>The Tor relay shares the host's bandwidth. It's capped at a few hundred KBit/s so I don't notice it.</li>
+        <li>Nothing in this list is doing anything sketchy. Immich is on a LAN-only IP. qBittorrent is LAN-only. The *arr suite automates downloading things I already own or buy.</li>
+      </ul>
+
+      <h2>What's next</h2>
+      <p>
+        Two specific things, both small:
+      </p>
+      <ul>
+        <li><strong>K3s on a second box</strong>, so I can move the high-availability pieces (mail, Samba) off a single host. Not a full cluster &mdash; just enough so that one dead box doesn't mean no mail.</li>
+        <li><strong>Replace the cron rsyncs with restic</strong>, encrypted, pushed to Backblaze B2. Rsync is fine. Restic is fine-plus.</li>
+      </ul>
 
       <p style="margin-top: 48px;">
         <a href="/" class="btn btn-primary">&larr; Back to Portfolio</a>
         <a href="https://github.com/null8878" class="btn btn-outline" target="_blank" rel="noopener">View GitHub &#8599;</a>
+        <a href="/resume.html" class="btn btn-outline">Resume</a>
       </p>
 
     </div>
